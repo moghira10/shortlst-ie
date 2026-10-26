@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { getPracticeUser, unauthorized } from '@/lib/apiAuth';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import { createEngineSession, engineConfigured } from '@/lib/engine';
+import { BASE_PATH } from '@/lib/paths';
 import {
   PRACTICE_GUIDELINES,
   buildJobDescription,
@@ -128,7 +129,7 @@ export async function POST(req: NextRequest) {
       candidate_name: candidateName,
       candidate_resume: input.resume?.trim() ?? '',
       recruiter_id: process.env.PRACTICE_RECRUITER_ID ?? 'shortlst-practice',
-      callback_url: `${appUrl}/api/webhooks/interview-complete`,
+      callback_url: `${appUrl}${BASE_PATH}/api/webhooks/interview-complete`,
       custom_questions: [],
       interview_guidelines: PRACTICE_GUIDELINES,
     });

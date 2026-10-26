@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
+import { withBase } from '@/lib/paths';
 
 function Callback() {
   const router = useRouter();
@@ -11,7 +12,7 @@ function Callback() {
 
   useEffect(() => {
     const raw = params.get('next');
-    const next = raw && raw.startsWith('/') && !raw.startsWith('//') ? raw : '/practice';
+    const next = raw && raw.startsWith('/') && !raw.startsWith('//') ? raw : '/dashboard';
 
     // supabase-js picks up the session from the URL (hash tokens or ?code=)
     // on load; wait for it, then continue.
@@ -33,7 +34,7 @@ function Callback() {
 
   return failed ? (
     <p className="text-sm text-slate-500">
-      That sign-in link didn&rsquo;t work. <a href="/signin" className="text-brand-600 underline">Try again</a>
+      That sign-in link didn&rsquo;t work. <a href={withBase('/signin')} className="text-brand-600 underline">Try again</a>
     </p>
   ) : (
     <p className="text-sm text-slate-500">Signing you in…</p>

@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
+import { withBase } from '@/lib/paths';
 
 export default function SiteHeader({ signedIn = false }: { signedIn?: boolean }) {
   const router = useRouter();
@@ -15,8 +16,8 @@ export default function SiteHeader({ signedIn = false }: { signedIn?: boolean })
   return (
     <header className="border-b border-slate-100 bg-white/80 backdrop-blur sticky top-0 z-10">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Link href={signedIn ? '/practice' : '/'} className="flex items-center gap-2">
-          <img src="/logo.svg" alt="Shortlst" className="h-6" />
+        <Link href={signedIn ? '/dashboard' : '/'} className="flex items-center gap-2">
+          <img src={withBase('/logo.svg')} alt="Shortlst" className="h-6" />
           <span className="text-xl font-bold tracking-tight text-black">shortlst</span>
           <span className="ml-1 rounded-full border border-brand-200 bg-brand-50 px-2 py-0.5 text-xs font-semibold text-brand-600">
             Practice
@@ -24,7 +25,7 @@ export default function SiteHeader({ signedIn = false }: { signedIn?: boolean })
         </Link>
         {signedIn ? (
           <div className="flex items-center gap-5 text-sm">
-            <Link href="/practice" className="text-slate-600 hover:text-slate-900">Dashboard</Link>
+            <Link href="/dashboard" className="text-slate-600 hover:text-slate-900">Dashboard</Link>
             <button onClick={signOut} className="text-slate-500 hover:text-slate-800">Sign out</button>
           </div>
         ) : (

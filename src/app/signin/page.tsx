@@ -4,10 +4,11 @@ import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import SiteHeader from '@/components/SiteHeader';
 import { supabase } from '@/lib/supabaseClient';
+import { withBase } from '@/lib/paths';
 
 function safeNext(next: string | null): string {
   // Only allow same-origin relative paths
-  return next && next.startsWith('/') && !next.startsWith('//') ? next : '/practice';
+  return next && next.startsWith('/') && !next.startsWith('//') ? next : '/dashboard';
 }
 
 function SignInForm() {
@@ -25,7 +26,7 @@ function SignInForm() {
   }, [router, next]);
 
   const redirectTo = () =>
-    `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`;
+    `${window.location.origin}${withBase('/auth/callback')}?next=${encodeURIComponent(next)}`;
 
   async function withGoogle() {
     setError('');
@@ -58,7 +59,7 @@ function SignInForm() {
   return (
     <div className="w-full max-w-md rounded-3xl border border-slate-100 bg-white p-8 shadow-xl">
       <div className="mb-6 flex items-center gap-3">
-        <img src="/jane.png" alt="Jane" className="h-12 w-12 rounded-full object-cover object-top" />
+        <img src={withBase('/jane.png')} alt="Jane" className="h-12 w-12 rounded-full object-cover object-top" />
         <div>
           <h1 className="text-xl font-bold text-slate-900">Sign in to practise</h1>
           <p className="text-sm text-slate-500">Your sessions and feedback are saved to your account.</p>

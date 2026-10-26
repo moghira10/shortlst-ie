@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import SiteHeader from '@/components/SiteHeader';
 import { PRODUCT_MANAGER } from '@/lib/practiceConfig';
+import { withBase } from '@/lib/paths';
 
 const STEPS = [
   { n: '1', title: 'Pick your round', body: 'Product sense, execution, metrics or behavioural — at APM, PM or Senior PM level.' },
@@ -45,7 +46,7 @@ export default function Home() {
               <span className="font-mono text-xs text-white/60">14:32</span>
             </div>
             <div className="relative aspect-[4/3]">
-              <img src="/jane.png" alt="Jane, the AI interviewer" className="h-full w-full object-cover object-top" />
+              <img src={withBase('/jane.png')} alt="Jane, the AI interviewer" className="h-full w-full object-cover object-top" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent" />
               <div className="absolute bottom-4 left-4 right-4">
                 <p className="mb-1 text-xs font-semibold text-purple-300">Jane · AI interviewer</p>
@@ -92,7 +93,7 @@ export default function Home() {
       </section>
 
       <footer className="mt-12 border-t border-slate-100 py-8 text-center text-xs text-slate-400">
-        Hiring? <a href="https://shortlst.me" className="text-brand-600 hover:underline">Shortlst for teams</a> · help@shortlst.me
+        Hiring? <a href="/" className="text-brand-600 hover:underline">Shortlst for teams</a> · help@shortlst.me
       </footer>
     </div>
   );

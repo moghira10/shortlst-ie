@@ -41,7 +41,7 @@ export default function PracticeDashboard() {
 
   useEffect(() => {
     if (!session) return;
-    authFetch('/api/practice')
+    authFetch('/api/interviews')
       .then(r => r.json())
       .then(d => {
         setHistory(d.interviews ?? []);
@@ -59,7 +59,7 @@ export default function PracticeDashboard() {
     setCreating(true);
     setError('');
     try {
-      const res = await authFetch('/api/practice', {
+      const res = await authFetch('/api/interviews', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -73,7 +73,7 @@ export default function PracticeDashboard() {
       });
       const body = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(body.error || 'Could not start your interview');
-      router.push(`/practice/${body.session_id}/room`);
+      router.push(`/interviews/${body.session_id}/room`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
       setCreating(false);
@@ -235,9 +235,9 @@ function HistoryItem({ row }: { row: HistoryRow }) {
   const expired = row.status !== 'completed' && Date.now() - new Date(row.created_at).getTime() > 48 * 3600 * 1000;
 
   const href =
-    row.status === 'completed' ? `/practice/${row.session_id}` :
-    row.status === 'created' && !expired ? `/practice/${row.session_id}/room` :
-    row.status === 'in_progress' ? `/practice/${row.session_id}` : null;
+    row.status === 'completed' ? `/interviews/${row.session_id}` :
+    row.status === 'created' && !expired ? `/interviews/${row.session_id}/room` :
+    row.status === 'in_progress' ? `/interviews/${row.session_id}` : null;
 
   const badge =
     row.status === 'completed' ? (

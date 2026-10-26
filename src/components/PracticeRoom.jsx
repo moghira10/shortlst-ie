@@ -7,6 +7,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { authFetch } from "@/lib/authFetch";
 import { PRODUCT_MANAGER } from "@/lib/practiceConfig";
+import { withBase } from "@/lib/paths";
 
 const BRAND = "#8b5cf6";
 
@@ -163,15 +164,15 @@ export default function PracticeRoom({ sessionId }) {
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await authFetch(`/api/practice/${sessionId}/join`);
+        const res = await authFetch(`/api/interviews/${sessionId}/join`);
         if (res.status === 401) {
-          router.replace(`/signin?next=${encodeURIComponent(`/practice/${sessionId}/room`)}`);
+          router.replace(`/signin?next=${encodeURIComponent(`/interviews/${sessionId}/room`)}`);
           return;
         }
         if (res.status === 410) {
           const body = await res.text().catch(() => "");
           if (body.includes("completed")) {
-            router.replace(`/practice/${sessionId}`);
+            router.replace(`/interviews/${sessionId}`);
           } else {
             setError("session_expired");
             setPhase("error");
@@ -250,7 +251,7 @@ export default function PracticeRoom({ sessionId }) {
     setPhase("joining");
     try {
       // Start the bot (lazy — it isn't running until the candidate joins)
-      await authFetch(`/api/practice/${sessionId}/start`, { method: "POST" }).catch(() => {});
+      await authFetch(`/api/interviews/${sessionId}/start`, { method: "POST" }).catch(() => {});
 
       // Stop the lobby preview stream — Daily will open the camera itself
       localStreamRef.current?.getTracks().forEach(t => t.stop());
@@ -323,7 +324,7 @@ export default function PracticeRoom({ sessionId }) {
         }
 
         setPhase("complete");
-        router.replace(`/practice/${sessionId}`);
+        router.replace(`/interviews/${sessionId}`);
       });
       call.on("error", (e) => {
         setError(e.errorMsg || "Connection error");
@@ -355,7 +356,7 @@ export default function PracticeRoom({ sessionId }) {
   const endCall = useCallback(async () => {
     // Notify the engine so it skips the reconnect grace period
     try {
-      await authFetch(`/api/practice/${sessionId}/end`, { method: "POST" });
+      await authFetch(`/api/interviews/${sessionId}/end`, { method: "POST" });
     } catch (_) { /* non-fatal — bot will still time out */ }
     if (callRef.current) await callRef.current.leave();
   }, [sessionId]);
@@ -409,14 +410,14 @@ export default function PracticeRoom({ sessionId }) {
       "We couldn't connect to your interview session. Check your internet connection and try again.";
     return (
       <div style={S.loadScreen}>
-        <img src="/logo.svg" alt="Shortlst" style={{ height: 32, marginBottom: 40 }} />
+        <img src={withBase('/logo.svg')} alt="Shortlst" style={{ height: 32, marginBottom: 40 }} />
         <div style={S.errorCard}>
           <div style={{ height: 5, background: "linear-gradient(90deg, #e5e7eb, #d1d5db)" }} />
           <div style={{ padding: "36px 36px 32px", display: "flex", flexDirection: "column", alignItems: "center", gap: 14, textAlign: "center" }}>
             <h1 style={{ fontSize: 21, fontWeight: 700, color: "#111", margin: 0 }}>{title}</h1>
             <p style={{ fontSize: 14, color: "#6b7280", lineHeight: 1.7, margin: 0, maxWidth: 360 }}>{body}</p>
             <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
-              <a href="/practice" style={{ ...S.secondaryBtn }}>Back to dashboard</a>
+              <a href={withBase("/dashboard")} style={{ ...S.secondaryBtn }}>Back to dashboard</a>
               {error !== "session_expired" && error !== "not_found" && error !== "connection_dropped" && (
                 <button onClick={() => window.location.reload()} style={{ ...S.primaryBtn }}>Try again</button>
               )}
@@ -433,8 +434,8 @@ export default function PracticeRoom({ sessionId }) {
   if (phase === "lobby" || phase === "joining") return (
     <div style={{ ...S.lobbyPage, overflowY: "auto" }}>
       <div style={{ ...S.lobbyLogo, padding: isMobile ? "14px 20px" : "20px 40px" }}>
-        <a href="/practice" style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none" }}>
-          <img src="/logo.svg" alt="Shortlst" style={{ height: isMobile ? 24 : 28 }} />
+        <a href={withBase("/dashboard")} style={{ display: "flex", alignItems: "center", gap: 8, textDecoration: "none" }}>
+          <img src={withBase('/logo.svg')} alt="Shortlst" style={{ height: isMobile ? 24 : 28 }} />
           <span style={{ fontWeight: 700, fontSize: isMobile ? 16 : 20, letterSpacing: "-0.01em", color: "#111" }}>shortlst</span>
           <span style={S.practicePill}>Practice</span>
         </a>
@@ -547,7 +548,7 @@ export default function PracticeRoom({ sessionId }) {
     <div style={S.callPage}>
       {/* Top bar */}
       <div style={{ ...S.callHeader, padding: isMobile ? "10px 16px" : "12px 24px" }}>
-        <img src="/logo.svg" alt="Shortlst" style={{ height: isMobile ? 22 : 28, filter: "brightness(0) invert(1)" }} />
+        <img src={withBase('/logo.svg')} alt="Shortlst" style={{ height: isMobile ? 22 : 28, filter: "brightness(0) invert(1)" }} />
         <div style={S.practiceBadge}>PRACTICE</div>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <Timer startTime={startTime} />
@@ -600,7 +601,7 @@ export default function PracticeRoom({ sessionId }) {
             : "0 0 0 1px rgba(255,255,255,0.07), 0 12px 40px rgba(0,0,0,0.6)",
           transition: "box-shadow 0.4s ease",
         }}>
-          <img src="/jane.png" alt="Jane" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }} />
+          <img src={withBase('/jane.png')} alt="Jane" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }} />
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 55%)", pointerEvents: "none" }} />
           <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "8px 10px 10px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 5 }}>

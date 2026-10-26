@@ -8,6 +8,7 @@ import { authFetch } from '@/lib/authFetch';
 import { useRequireAuth } from '@/lib/useRequireAuth';
 import { PRODUCT_MANAGER } from '@/lib/practiceConfig';
 import type { Evaluation, ParameterScore, PracticeInterview, TranscriptTurn } from '@/lib/types';
+import { withBase } from '@/lib/paths';
 
 const POLL_MS = 5000;
 // Evaluation normally lands within a couple of minutes of hanging up
@@ -33,7 +34,7 @@ export default function PracticeReportPage() {
     let cancelled = false;
 
     const load = async () => {
-      const res = await authFetch(`/api/practice/${sessionId}`).catch(() => null);
+      const res = await authFetch(`/api/interviews/${sessionId}`).catch(() => null);
       if (cancelled) return;
       if (res?.status === 404) return setMissing(true);
       if (res?.ok) {
@@ -62,7 +63,7 @@ export default function PracticeReportPage() {
           <Centered
             title="You haven't taken this interview yet"
             body="Head to the lobby when you're ready."
-            action={<Link href={`/practice/${sessionId}/room`} className="rounded-xl bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-600">Go to lobby →</Link>}
+            action={<Link href={`/interviews/${sessionId}/room`} className="rounded-xl bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-600">Go to lobby →</Link>}
           />
         ) : practice.status === 'failed' ? (
           <Centered title="We couldn't score this session" body="Something went wrong on our side. This session didn't count towards your monthly limit." action={<PracticeAgain />} />
@@ -87,7 +88,7 @@ function Centered({ title, body, spinner, action }: { title: string; body?: stri
     <div className="flex flex-col items-center gap-4 py-24 text-center">
       {spinner && (
         <div className="relative">
-          <img src="/jane.png" alt="Jane" className="h-20 w-20 rounded-full object-cover object-top" />
+          <img src={withBase('/jane.png')} alt="Jane" className="h-20 w-20 rounded-full object-cover object-top" />
           <svg className="absolute -inset-2 h-24 w-24 animate-spin text-brand-500/40" viewBox="0 0 24 24" fill="none">
             <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" strokeDasharray="30 70" />
           </svg>
@@ -102,7 +103,7 @@ function Centered({ title, body, spinner, action }: { title: string; body?: stri
 
 function PracticeAgain() {
   return (
-    <Link href="/practice" className="rounded-xl bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-600">
+    <Link href="/dashboard" className="rounded-xl bg-brand-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-600">
       Practise again →
     </Link>
   );
@@ -256,7 +257,7 @@ function Transcript({ turns }: { turns: TranscriptTurn[] }) {
           {turns.filter(t => t.content?.trim()).map((t, i) => (
             <div key={i} className={`flex gap-3 ${isJane(t) ? '' : 'flex-row-reverse text-right'}`}>
               {isJane(t)
-                ? <img src="/jane.png" alt="Jane" className="h-8 w-8 flex-shrink-0 rounded-full object-cover object-top" />
+                ? <img src={withBase('/jane.png')} alt="Jane" className="h-8 w-8 flex-shrink-0 rounded-full object-cover object-top" />
                 : <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-brand-500 text-xs font-bold text-white">You</span>}
               <p className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${isJane(t) ? 'bg-slate-50 text-slate-700' : 'bg-brand-50 text-slate-800'}`}>
                 {t.content}
